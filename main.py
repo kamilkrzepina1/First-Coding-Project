@@ -649,39 +649,268 @@ def draw_enemy(enemy):
 # BOSS
 # ==================================================
 
+# ==================================================
+# BOSSY - INNY WYGLAD NA KAZDYM POZIOMIE
+# ==================================================
+
 def draw_boss(boss):
     x = boss.x
     y = boss.y
 
-    pygame.draw.rect(screen, DARK_PURPLE, (x, y + 25, 35, 35))
-    pygame.draw.rect(screen, DARK_PURPLE, (x + 165, y + 25, 35, 35))
+    t = pygame.time.get_ticks()
+    pulse = int(5 * math.sin(t * 0.006))
+    glow = max(1, 3 + pulse)
 
-    pygame.draw.rect(screen, PURPLE, (x + 10, y + 35, 25, 20))
-    pygame.draw.rect(screen, PURPLE, (x + 165, y + 35, 25, 20))
+    # ==================================================
+    # POZIOM 1 - NISZCZYCIEL ORBITALNY
+    # Fioletowy robot
+    # ==================================================
+    if current_level == 1:
 
-    pygame.draw.rect(screen, DARK_PURPLE, (x + 35, y + 10, 130, 65))
-    pygame.draw.rect(screen, PURPLE, (x + 45, y + 5, 110, 70))
-    pygame.draw.rect(screen, PURPLE, (x + 60, y, 80, 80))
+        pygame.draw.circle(screen, LIGHT_PURPLE, (x + 100, y + 40), 52 + glow, 3)
 
-    pygame.draw.rect(screen, LIGHT_PURPLE, (x + 55, y + 10, 15, 10))
-    pygame.draw.rect(screen, LIGHT_PURPLE, (x + 130, y + 10, 15, 10))
-    pygame.draw.rect(screen, LIGHT_PURPLE, (x + 75, y + 5, 12, 8))
-    pygame.draw.rect(screen, LIGHT_PURPLE, (x + 113, y + 5, 12, 8))
+        pygame.draw.rect(screen, DARK_PURPLE, (x + 5, y + 25, 40, 40))
+        pygame.draw.rect(screen, DARK_PURPLE, (x + 155, y + 25, 40, 40))
 
-    pygame.draw.rect(screen, PINK, (x + 65, y + 28, 25, 20))
-    pygame.draw.rect(screen, PINK, (x + 110, y + 28, 25, 20))
+        pygame.draw.rect(screen, PURPLE, (x + 35, y + 8, 130, 65))
+        pygame.draw.rect(screen, LIGHT_PURPLE, (x + 55, y, 90, 80))
 
-    pygame.draw.rect(screen, RED, (x + 72, y + 33, 12, 12))
-    pygame.draw.rect(screen, RED, (x + 117, y + 33, 12, 12))
+        pygame.draw.rect(screen, PINK, (x + 65, y + 25, 25, 20))
+        pygame.draw.rect(screen, PINK, (x + 110, y + 25, 25, 20))
 
-    pygame.draw.rect(screen, WHITE, (x + 75, y + 34, 5, 5))
-    pygame.draw.rect(screen, WHITE, (x + 120, y + 34, 5, 5))
+        pygame.draw.rect(screen, RED, (x + 72, y + 30, 12, 12))
+        pygame.draw.rect(screen, RED, (x + 117, y + 30, 12, 12))
 
-    pygame.draw.rect(screen, DARK_PURPLE, (x + 80, y + 55, 40, 12))
-    pygame.draw.rect(screen, PINK, (x + 88, y + 58, 24, 4))
+        pygame.draw.rect(screen, WHITE, (x + 75, y + 32, 5, 5))
+        pygame.draw.rect(screen, WHITE, (x + 120, y + 32, 5, 5))
 
-    pygame.draw.rect(screen, LIGHT_PURPLE, (x + 20, y + 15, 10, 10))
-    pygame.draw.rect(screen, LIGHT_PURPLE, (x + 170, y + 15, 10, 10))
+        pygame.draw.rect(screen, DARK_PURPLE, (x + 80, y + 55, 40, 12))
+        pygame.draw.rect(screen, PINK, (x + 88, y + 58, 24, 4))
+
+        pygame.draw.rect(screen, LIGHT_PURPLE, (x + 20, y + 15, 10, 10))
+        pygame.draw.rect(screen, LIGHT_PURPLE, (x + 170, y + 15, 10, 10))
+
+    # ==================================================
+    # POZIOM 2 - MARSJANSKI KOLOS
+    # Czerwony potwor z Marsa
+    # ==================================================
+    elif current_level == 2:
+
+        pygame.draw.circle(screen, (120, 35, 15), (x + 100, y + 40), 48 + glow)
+        pygame.draw.circle(screen, ORANGE, (x + 100, y + 40), 42)
+
+        # Rogi
+        pygame.draw.polygon(
+            screen, (180, 55, 25),
+            [(x + 55, y + 20), (x + 35, y - 12), (x + 75, y + 8)]
+        )
+
+        pygame.draw.polygon(
+            screen, (180, 55, 25),
+            [(x + 145, y + 20), (x + 165, y - 12), (x + 125, y + 8)]
+        )
+
+        # Czaszka
+        pygame.draw.ellipse(screen, (210, 90, 40), (x + 45, y + 5, 110, 70))
+        pygame.draw.ellipse(screen, (120, 30, 15), (x + 55, y + 22, 35, 25))
+        pygame.draw.ellipse(screen, (120, 30, 15), (x + 110, y + 22, 35, 25))
+
+        pygame.draw.circle(screen, YELLOW, (x + 72, y + 34), 9)
+        pygame.draw.circle(screen, YELLOW, (x + 127, y + 34), 9)
+
+        pygame.draw.circle(screen, RED, (x + 72, y + 34), 4)
+        pygame.draw.circle(screen, RED, (x + 127, y + 34), 4)
+
+        # Paszcza
+        pygame.draw.rect(screen, (70, 15, 10), (x + 72, y + 52, 56, 14))
+        for tooth_x in range(x + 78, x + 125, 12):
+            pygame.draw.polygon(
+                screen, WHITE,
+                [
+                    (tooth_x, y + 52),
+                    (tooth_x + 6, y + 52),
+                    (tooth_x + 3, y + 60)
+                ]
+            )
+
+        # Kolce
+        for spike_x in [x + 25, x + 50, x + 150, x + 175]:
+            pygame.draw.polygon(
+                screen, RED,
+                [
+                    (spike_x, y + 45),
+                    (spike_x + 10, y + 20),
+                    (spike_x + 20, y + 45)
+                ]
+            )
+
+    # ==================================================
+    # POZIOM 3 - WIDMO GALAKTYKI
+    # Duch z planety cieni
+    # ==================================================
+    elif current_level == 3:
+
+        pygame.draw.ellipse(
+            screen, (70, 10, 120),
+            (x + 5 - glow, y - 5 - glow, 190 + glow * 2, 90 + glow * 2)
+        )
+
+        pygame.draw.ellipse(
+            screen, (130, 40, 190),
+            (x + 20, y + 2, 160, 65)
+        )
+
+        # Ciemna twarz
+        pygame.draw.ellipse(screen, (25, 5, 50), (x + 35, y + 12, 130, 55))
+
+        # Oczy
+        pygame.draw.ellipse(screen, CYAN, (x + 55, y + 25, 35, 15))
+        pygame.draw.ellipse(screen, CYAN, (x + 110, y + 25, 35, 15))
+
+        pygame.draw.circle(screen, WHITE, (x + 72, y + 32), 5)
+        pygame.draw.circle(screen, WHITE, (x + 127, y + 32), 5)
+
+        # Usta
+        pygame.draw.polygon(
+            screen, PINK,
+            [
+                (x + 75, y + 55),
+                (x + 100, y + 65),
+                (x + 125, y + 55),
+                (x + 100, y + 58)
+            ]
+        )
+
+        # Cieniste macki
+        for i in range(4):
+            start_x = x + 35 + i * 42
+            pygame.draw.line(
+                screen,
+                (100, 20, 160),
+                (start_x, y + 60),
+                (start_x + int(math.sin(t * 0.004 + i) * 10), y + 85),
+                6
+            )
+
+        pygame.draw.circle(screen, LIGHT_PURPLE, (x + 100, y + 40), 48 + glow, 2)
+
+    # ==================================================
+    # POZIOM 4 - GENERAL MECHANICUS
+    # Ciezki robot imperium
+    # ==================================================
+    elif current_level == 4:
+
+        pygame.draw.rect(screen, (45, 50, 70), (x + 10, y + 20, 180, 55))
+        pygame.draw.rect(screen, (90, 100, 125), (x + 35, y + 5, 130, 70))
+
+        # Pancerz
+        pygame.draw.rect(screen, (120, 130, 155), (x + 45, y + 5, 110, 65))
+        pygame.draw.rect(screen, (45, 50, 70), (x + 60, y + 15, 80, 45))
+
+        # Czerwone oczy
+        pygame.draw.rect(screen, RED, (x + 68, y + 25, 22, 12))
+        pygame.draw.rect(screen, RED, (x + 110, y + 25, 22, 12))
+
+        pygame.draw.rect(screen, WHITE, (x + 74, y + 28, 7, 5))
+        pygame.draw.rect(screen, WHITE, (x + 116, y + 28, 7, 5))
+
+        # Antena
+        pygame.draw.line(screen, (180, 190, 210), (x + 100, y + 5), (x + 100, y - 15), 5)
+        pygame.draw.circle(screen, RED, (x + 100, y - 17), 7 + glow)
+
+        # Dzialka po bokach
+        pygame.draw.rect(screen, (70, 80, 105), (x, y + 35, 35, 20))
+        pygame.draw.rect(screen, RED, (x + 5, y + 40, 25, 10))
+
+        pygame.draw.rect(screen, (70, 80, 105), (x + 165, y + 35, 35, 20))
+        pygame.draw.rect(screen, RED, (x + 170, y + 40, 25, 10))
+
+        # Metalowe detale
+        pygame.draw.rect(screen, GOLD, (x + 85, y + 48, 30, 12))
+        pygame.draw.rect(screen, (35, 40, 55), (x + 90, y + 51, 20, 6))
+
+        pygame.draw.rect(screen, (180, 190, 210), (x + 20, y + 15, 15, 10))
+        pygame.draw.rect(screen, (180, 190, 210), (x + 165, y + 15, 15, 10))
+
+    # ==================================================
+    # POZIOM 5 - WLADCA WSZECHSWIATA
+    # Kosmiczny wladca
+    # ==================================================
+    elif current_level == 5:
+
+        # Aura
+        pygame.draw.circle(
+            screen,
+            (100, 20, 180),
+            (x + 100, y + 40),
+            55 + glow,
+            4
+        )
+
+        pygame.draw.circle(
+            screen,
+            (180, 80, 255),
+            (x + 100, y + 40),
+            45,
+            2
+        )
+
+        # Korona
+        pygame.draw.polygon(
+            screen, GOLD,
+            [
+                (x + 45, y + 25),
+                (x + 35, y - 15),
+                (x + 70, y + 5),
+                (x + 100, y - 25),
+                (x + 130, y + 5),
+                (x + 165, y - 15),
+                (x + 155, y + 25)
+            ]
+        )
+
+        pygame.draw.rect(screen, GOLD, (x + 45, y + 20, 110, 10))
+
+        # Twarz
+        pygame.draw.ellipse(screen, (65, 15, 120), (x + 50, y + 15, 100, 60))
+        pygame.draw.ellipse(screen, (100, 30, 180), (x + 58, y + 20, 84, 48))
+
+        # Oczy
+        pygame.draw.circle(screen, CYAN, (x + 78, y + 38), 10)
+        pygame.draw.circle(screen, CYAN, (x + 122, y + 38), 10)
+
+        pygame.draw.circle(screen, WHITE, (x + 78, y + 38), 4)
+        pygame.draw.circle(screen, WHITE, (x + 122, y + 38), 4)
+
+        # Usta
+        pygame.draw.arc(
+            screen,
+            PINK,
+            (x + 78, y + 45, 44, 20),
+            math.pi,
+            2 * math.pi,
+            4
+        )
+
+        # Kosmiczne kamienie w koronie
+        pygame.draw.circle(screen, RED, (x + 65, y + 12), 6)
+        pygame.draw.circle(screen, CYAN, (x + 100, y - 5), 8)
+        pygame.draw.circle(screen, GREEN, (x + 135, y + 12), 6)
+
+        # Ramiona
+        pygame.draw.rect(screen, DARK_PURPLE, (x + 5, y + 35, 45, 30))
+        pygame.draw.rect(screen, DARK_PURPLE, (x + 150, y + 35, 45, 30))
+
+        pygame.draw.circle(screen, GOLD, (x + 25, y + 50), 9)
+        pygame.draw.circle(screen, GOLD, (x + 175, y + 50), 9)
+
+    # Obramowanie bossa
+    pygame.draw.rect(
+        screen,
+        WHITE,
+        (x, y, boss.width, boss.height),
+        1
+    )
 
 
 # ==================================================
