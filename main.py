@@ -51,6 +51,18 @@ NORMAL_SHOOT_DELAY = 300
 RAPID_SHOOT_DELAY = 110
 RAPID_FIRE_DURATION = 6000
 
+# SYSTEM POZIOMOW
+KILLS_TO_BOSS = 10
+LEVEL_TRANSITION_DURATION = 3000
+
+LEVELS = [
+    {"name": "ZIEMSKA ORBITA", "boss": "NISZCZYCIEL ORBITALNY"},
+    {"name": "MARS", "boss": "MARSJANSKI KOLOS"},
+    {"name": "PLANETA CIENI", "boss": "WIDMO GALAKTYKI"},
+    {"name": "STACJA IMPERIUM", "boss": "GENERAL MECHANICUS"},
+    {"name": "SERCE GALAKTYKI", "boss": "WLADCA WSZECHSWIATA"}
+]
+
 
 # ==================================================
 # REKORDY
@@ -85,10 +97,7 @@ def save_record(name, points):
         if points > existing_record.get("score", 0):
             existing_record["score"] = points
     else:
-        records.append({
-            "name": name,
-            "score": points
-        })
+        records.append({"name": name, "score": points})
 
     records.sort(
         key=lambda record: record.get("score", 0),
@@ -107,7 +116,7 @@ records = load_records()
 
 
 # ==================================================
-# TŁO KOSMICZNE
+# TLO KOSMICZNE
 # ==================================================
 
 stars = []
@@ -132,29 +141,18 @@ background = pygame.Surface((WIDTH, HEIGHT))
 for y in range(HEIGHT):
     darkness = int(5 + y * 0.025)
 
-    color = (
-        3,
-        4 + darkness // 5,
-        15 + darkness
-    )
+    color = (3, 4 + darkness // 5, 15 + darkness)
 
     pygame.draw.line(background, color, (0, y), (WIDTH, y))
 
 
-space_clouds = pygame.Surface(
-    (WIDTH, HEIGHT),
-    pygame.SRCALPHA
-)
+space_clouds = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 
 pygame.draw.ellipse(space_clouds, (30, 90, 180, 12), (-100, 60, 280, 180))
 pygame.draw.ellipse(space_clouds, (20, 110, 160, 12), (620, 300, 260, 200))
 pygame.draw.ellipse(space_clouds, (45, 65, 160, 10), (40, 480, 250, 150))
 
-
-galaxy_surface = pygame.Surface(
-    (WIDTH, HEIGHT),
-    pygame.SRCALPHA
-)
+galaxy_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 
 
 def create_galaxy(x, y, size, rotation=0):
@@ -167,12 +165,8 @@ def create_galaxy(x, y, size, rotation=0):
     pygame.draw.ellipse(
         galaxy_surface,
         (30, 140, 220, 12),
-        (
-            x - size * 0.7,
-            y - size * 0.35,
-            size * 1.4,
-            size * 0.7
-        )
+        (x - size * 0.7, y - size * 0.35,
+         size * 1.4, size * 0.7)
     )
 
     for arm in range(2):
@@ -226,11 +220,134 @@ create_galaxy(690, 85, 35, 0.8)
 create_galaxy(125, 500, 30, 2.0)
 
 
-def draw_background():
-    screen.blit(background, (0, 0))
-    screen.blit(space_clouds, (0, 0))
-    screen.blit(galaxy_surface, (0, 0))
+# ==================================================
+# NOWE TLA POSZCZEGOLNYCH POZIOMOW
+# ==================================================
 
+def draw_earth():
+    x, y, radius = 1040, 390, 245
+
+    pygame.draw.circle(screen, (5, 20, 55), (x, y), radius + 15)
+    pygame.draw.circle(screen, (20, 75, 160), (x, y), radius)
+    pygame.draw.circle(screen, (30, 125, 210), (x - 15, y - 15), radius - 12)
+
+    # Kontynenty
+    pygame.draw.ellipse(screen, (45, 145, 85), (880, 270, 115, 75))
+    pygame.draw.ellipse(screen, (45, 145, 85), (1010, 330, 90, 125))
+    pygame.draw.ellipse(screen, (45, 145, 85), (1100, 250, 95, 65))
+    pygame.draw.ellipse(screen, (45, 145, 85), (1130, 410, 65, 90))
+    pygame.draw.ellipse(screen, (45, 145, 85), (900, 465, 80, 45))
+
+    pygame.draw.circle(screen, (80, 180, 255), (x, y), radius, 5)
+
+    # Delikatny cien
+    shadow = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    pygame.draw.circle(shadow, (0, 0, 20, 85), (x + 80, y + 10), radius)
+    screen.blit(shadow, (0, 0))
+
+
+def draw_mars():
+    x, y, radius = 1030, 390, 245
+
+    pygame.draw.circle(screen, (70, 20, 10), (x, y), radius + 12)
+    pygame.draw.circle(screen, (170, 65, 35), (x, y), radius)
+    pygame.draw.circle(screen, (205, 90, 45), (x - 25, y - 25), radius - 15)
+
+    # Kratery
+    pygame.draw.ellipse(screen, (125, 45, 30), (900, 280, 85, 45))
+    pygame.draw.ellipse(screen, (125, 45, 30), (1050, 330, 100, 60))
+    pygame.draw.ellipse(screen, (125, 45, 30), (970, 460, 70, 40))
+
+    pygame.draw.ellipse(screen, (230, 120, 65), (900, 275, 75, 35), 3)
+    pygame.draw.ellipse(screen, (230, 120, 65), (1055, 325, 90, 50), 3)
+
+    pygame.draw.circle(screen, (255, 130, 75), (x, y), radius, 5)
+
+
+def draw_shadow_planet():
+    x, y, radius = 1040, 390, 245
+
+    pygame.draw.circle(screen, (35, 5, 65), (x, y), radius + 15)
+    pygame.draw.circle(screen, (55, 15, 90), (x, y), radius)
+    pygame.draw.circle(screen, (90, 25, 130), (x - 45, y - 30), radius - 25)
+
+    pygame.draw.ellipse(screen, (35, 5, 55), (900, 290, 100, 55))
+    pygame.draw.ellipse(screen, (35, 5, 55), (1050, 360, 90, 65))
+    pygame.draw.ellipse(screen, (35, 5, 55), (960, 470, 75, 40))
+
+    pygame.draw.circle(screen, (160, 60, 220), (x, y), radius, 5)
+
+
+def draw_imperial_station():
+    x, y = 1030, 380
+
+    # Konstrukcja stacji
+    pygame.draw.circle(screen, (45, 55, 80), (x, y), 175, 20)
+    pygame.draw.circle(screen, (90, 105, 135), (x, y), 115, 35)
+    pygame.draw.circle(screen, (25, 35, 65), (x, y), 65)
+
+    pygame.draw.rect(screen, (65, 75, 105), (x - 230, y - 30, 460, 60))
+    pygame.draw.rect(screen, (45, 55, 85), (x - 30, y - 230, 60, 460))
+
+    # Czerwone swiatla
+    for i in range(-2, 3):
+        pygame.draw.circle(screen, RED, (x + i * 70, y - 30), 7)
+        pygame.draw.circle(screen, RED, (x + 30, y + i * 70), 7)
+
+    pygame.draw.circle(screen, (130, 150, 190), (x, y), 175, 4)
+
+
+def draw_galaxy_core():
+    x, y = 1030, 360
+
+    pygame.draw.circle(screen, (60, 20, 110), (x, y), 250)
+    pygame.draw.circle(screen, (100, 35, 170), (x, y), 210)
+    pygame.draw.circle(screen, (150, 65, 210), (x, y), 155)
+    pygame.draw.circle(screen, (230, 150, 255), (x, y), 90)
+    pygame.draw.circle(screen, (255, 220, 255), (x, y), 35)
+
+    for angle in range(0, 360, 30):
+        radians = math.radians(angle)
+
+        start_x = x + math.cos(radians) * 100
+        start_y = y + math.sin(radians) * 100
+
+        end_x = x + math.cos(radians) * 245
+        end_y = y + math.sin(radians) * 245
+
+        pygame.draw.line(
+            screen,
+            (150, 80, 230),
+            (int(start_x), int(start_y)),
+            (int(end_x), int(end_y)),
+            3
+        )
+
+
+def draw_level_background():
+    screen.blit(background, (0, 0))
+
+    if current_level == 1:
+        draw_earth()
+        screen.blit(space_clouds, (0, 0))
+
+    elif current_level == 2:
+        draw_mars()
+
+    elif current_level == 3:
+        draw_shadow_planet()
+
+    elif current_level == 4:
+        draw_imperial_station()
+
+    elif current_level == 5:
+        draw_galaxy_core()
+
+    else:
+        screen.blit(space_clouds, (0, 0))
+        screen.blit(galaxy_surface, (0, 0))
+
+    # Gwiazdy
     for star in stars:
         pygame.draw.circle(
             screen,
@@ -244,6 +361,10 @@ def draw_background():
         if star["y"] > HEIGHT:
             star["y"] = 0
             star["x"] = random.randint(0, WIDTH)
+
+
+def draw_background():
+    draw_level_background()
 
 
 # ==================================================
@@ -281,7 +402,7 @@ def create_explosion(x, y, boss_explosion=False):
 
 
 # ==================================================
-# SYSTEM BONUSÓW
+# SYSTEM BONUSOW
 # ==================================================
 
 bonuses = []
@@ -389,20 +510,12 @@ def damage_player():
     if shield_active:
         shield_active = False
 
-        create_explosion(
-            player.centerx,
-            player.centery,
-            False
-        )
-
+        create_explosion(player.centerx, player.centery, False)
         return
 
     lives -= 1
 
-    create_explosion(
-        player.centerx,
-        player.centery
-    )
+    create_explosion(player.centerx, player.centery)
 
     if lives <= 0:
         lives = 0
@@ -427,7 +540,7 @@ def draw_player_shield():
 
 
 # ==================================================
-# POCISKI PRZECIWNIKÓW
+# POCISKI PRZECIWNIKOW
 # ==================================================
 
 enemy_bullets = []
@@ -572,18 +685,16 @@ def draw_boss(boss):
 
 
 # ==================================================
-# TABELA REKORDÓW
+# TABELA REKORDOW
 # ==================================================
 
 def draw_leaderboard(records, start_y):
     title = font.render("TOP 5 GRACZY", True, GOLD)
-
     screen.blit(title, title.get_rect(center=(WIDTH // 2, start_y)))
 
     for i, record in enumerate(records[:5]):
         name = str(record.get("name", "Gracz"))[:15]
         points = record.get("score", 0)
-
         color = GOLD if i == 0 else WHITE
 
         text = small_font.render(
@@ -611,7 +722,7 @@ def draw_leaderboard(records, start_y):
 
 
 # ==================================================
-# POLSKI MYŚLIWIEC "ŁOŚ"
+# POLSKI MYSLIWIEC "LOS"
 # ==================================================
 
 def draw_player(player):
@@ -686,7 +797,6 @@ def draw_player(player):
 
     pygame.draw.ellipse(screen, (20, 50, 100), (x + 19, y + 10, 10, 17))
     pygame.draw.ellipse(screen, (40, 160, 220), (x + 20, y + 11, 8, 13))
-
     pygame.draw.line(screen, (190, 245, 255), (x + 22, y + 13), (x + 24, y + 11), 2)
 
     pygame.draw.circle(screen, RED, (x + 4, y + 35), 2)
@@ -697,7 +807,7 @@ def draw_player(player):
 
 
 # ==================================================
-# DUŻY MYŚLIWIEC NA EKRANIE STARTOWYM
+# DUZY MYSLIWIEC NA EKRANIE STARTOWYM
 # ==================================================
 
 def draw_title_ship(x, y):
@@ -766,7 +876,7 @@ def draw_title_ship(x, y):
 
 
 # ==================================================
-# FALUJĄCA POLSKA FLAGA
+# FALUJACA POLSKA FLAGA
 # ==================================================
 
 def draw_polish_flag(x, y, current_time):
@@ -797,25 +907,15 @@ def draw_polish_flag(x, y, current_time):
         bottom2 = y + flag_height + wave2
 
         pygame.draw.polygon(
-            screen,
-            WHITE,
-            [
-                (int(x1), int(top1)),
-                (int(x2), int(top2)),
-                (int(x2), int(middle2)),
-                (int(x1), int(middle1))
-            ]
+            screen, WHITE,
+            [(int(x1), int(top1)), (int(x2), int(top2)),
+             (int(x2), int(middle2)), (int(x1), int(middle1))]
         )
 
         pygame.draw.polygon(
-            screen,
-            RED,
-            [
-                (int(x1), int(middle1)),
-                (int(x2), int(middle2)),
-                (int(x2), int(bottom2)),
-                (int(x1), int(bottom1))
-            ]
+            screen, RED,
+            [(int(x1), int(middle1)), (int(x2), int(middle2)),
+             (int(x2), int(bottom2)), (int(x1), int(bottom1))]
         )
 
         shade = int(15 + 15 * abs(math.sin(current_time * 0.005 + t1 * 7)))
@@ -847,10 +947,8 @@ def draw_start_screen():
     screen.blit(title, title_rect)
 
     subtitle = menu_subtitle_font.render("KOSMICZNA", True, GOLD)
-
     screen.blit(subtitle, subtitle.get_rect(center=(WIDTH // 2, 91)))
 
-    # Symetryczne dekoracje tytułu
     pygame.draw.line(screen, WHITE, (250, 42), (390, 42), 4)
     pygame.draw.line(screen, RED, (250, 51), (390, 51), 4)
 
@@ -860,7 +958,6 @@ def draw_start_screen():
     ship_label = small_font.render("MYSLIWIEC L-OS", True, CYAN)
     screen.blit(ship_label, ship_label.get_rect(center=(WIDTH // 2, 135)))
 
-    # Statek i flaga wyśrodkowane na ekranie
     draw_title_ship(477, 150)
     draw_polish_flag(650, 175, current_time)
 
@@ -873,7 +970,6 @@ def draw_start_screen():
     pygame.draw.rect(screen, BLUE, name_box, 3, border_radius=8)
 
     cursor = "_" if (current_time // 500) % 2 == 0 else ""
-
     name_text = font.render(player_name + cursor, True, YELLOW)
     screen.blit(name_text, name_text.get_rect(center=name_box.center))
 
@@ -889,13 +985,7 @@ def draw_start_screen():
 
     screen.blit(controls, controls.get_rect(center=(WIDTH // 2, 445)))
 
-    pygame.draw.line(
-        screen,
-        GOLD,
-        (WIDTH // 2 - 170, 465),
-        (WIDTH // 2 + 170, 465),
-        2
-    )
+    pygame.draw.line(screen, GOLD, (WIDTH // 2 - 170, 465), (WIDTH // 2 + 170, 465), 2)
 
     draw_leaderboard(records, 480)
 
@@ -907,12 +997,7 @@ def draw_start_screen():
 player_name = ""
 game_started = False
 
-player = pygame.Rect(
-    WIDTH // 2 - 24,
-    HEIGHT - 100,
-    48,
-    56
-)
+player = pygame.Rect(WIDTH // 2 - 24, HEIGHT - 100, 48, 56)
 
 enemies = []
 bullets = []
@@ -928,37 +1013,22 @@ boss_health = BOSS_HEALTH
 boss_max_health = BOSS_HEALTH
 boss_direction = 1
 boss_active = False
-boss_defeated = False
 
 game_over = False
+campaign_complete = False
 record_saved = False
 
-restart_button = pygame.Rect(
-    WIDTH // 2 - 150,
-    515,
-    300,
-    55
-)
+current_level = 1
+kills_in_level = 0
+
+level_transition = False
+level_transition_until = 0
+
+restart_button = pygame.Rect(WIDTH // 2 - 150, 515, 300, 55)
 
 
-def reset_game():
-    global player
-    global enemies, bullets, explosions, enemy_bullets, bonuses
-    global last_shot, score, lives
-    global boss, boss_health, boss_direction
-    global boss_active, boss_defeated
-    global game_over, record_saved
-    global last_enemy_shot, last_boss_shot
-    global shield_active, rapid_fire_until
-
-    player = pygame.Rect(
-        WIDTH // 2 - 24,
-        HEIGHT - 100,
-        48,
-        56
-    )
-
-    enemies = [
+def create_enemies():
+    return [
         pygame.Rect(
             random.randint(0, WIDTH - 40),
             random.randint(-500, -50),
@@ -968,10 +1038,38 @@ def reset_game():
         for i in range(5)
     ]
 
+
+def reset_level():
+    global enemies, bullets, enemy_bullets, bonuses
+    global boss, boss_health, boss_direction, boss_active
+    global kills_in_level, last_enemy_shot, last_boss_shot
+
+    enemies = create_enemies()
     bullets = []
     enemy_bullets = []
-    explosions = []
     bonuses = []
+
+    boss = None
+    boss_health = BOSS_HEALTH
+    boss_direction = 1
+    boss_active = False
+
+    kills_in_level = 0
+
+    current_time = pygame.time.get_ticks()
+    last_enemy_shot = current_time
+    last_boss_shot = current_time
+
+
+def reset_game():
+    global player
+    global explosions
+    global last_shot, score, lives
+    global game_over, campaign_complete, record_saved
+    global shield_active, rapid_fire_until
+    global current_level, level_transition, level_transition_until
+
+    player = pygame.Rect(WIDTH // 2 - 24, HEIGHT - 100, 48, 56)
 
     score = 0
     lives = 3
@@ -979,22 +1077,53 @@ def reset_game():
     shield_active = False
     rapid_fire_until = 0
 
-    boss = None
-    boss_health = boss_max_health
-    boss_direction = 1
-    boss_active = False
-    boss_defeated = False
+    current_level = 1
+    level_transition = False
+    level_transition_until = 0
 
     game_over = False
+    campaign_complete = False
     record_saved = False
 
+    explosions = []
+
     last_shot = pygame.time.get_ticks()
-    last_enemy_shot = pygame.time.get_ticks()
-    last_boss_shot = pygame.time.get_ticks()
+
+    reset_level()
+
+
+def start_next_level():
+    global current_level, level_transition
+
+    current_level += 1
+    level_transition = False
+
+    reset_level()
+
+
+def defeat_boss():
+    global boss_active, boss, score
+    global level_transition, level_transition_until
+    global campaign_complete, enemy_bullets
+
+    if boss is not None:
+        create_explosion(boss.centerx, boss.centery, True)
+
+    boss_active = False
+    boss = None
+
+    score += 100
+    enemy_bullets = []
+
+    if current_level >= len(LEVELS):
+        campaign_complete = True
+    else:
+        level_transition = True
+        level_transition_until = pygame.time.get_ticks() + LEVEL_TRANSITION_DURATION
 
 
 # ==================================================
-# GŁÓWNA PĘTLA
+# GLOWNA PETLA
 # ==================================================
 
 running = True
@@ -1002,12 +1131,14 @@ running = True
 while running:
     clock.tick(60)
 
+    current_time = pygame.time.get_ticks()
+
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
             running = False
 
-        # Wpisywanie nicku na ekranie startowym
+        # Wpisywanie nicku
         if not game_started and event.type == pygame.KEYDOWN:
 
             if event.key == pygame.K_RETURN:
@@ -1023,8 +1154,8 @@ while running:
                 if event.unicode not in "\r\n\t":
                     player_name += event.unicode
 
-        # Restart gry
-        if game_over:
+        # Restart po przegranej lub ukonczeniu kampanii
+        if game_over or campaign_complete:
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
@@ -1041,8 +1172,12 @@ while running:
         pygame.display.flip()
         continue
 
+    # AUTOMATYCZNE PRZEJSCIE NA NASTEPNY POZIOM
+    if level_transition and current_time >= level_transition_until:
+        start_next_level()
+
     # AKTUALIZACJA GRY
-    if not game_over:
+    if not game_over and not campaign_complete and not level_transition:
 
         keys = pygame.key.get_pressed()
         current_time = pygame.time.get_ticks()
@@ -1083,22 +1218,18 @@ while running:
             if bullet.bottom < 0:
                 bullets.remove(bullet)
 
-        # POJAWIENIE SIĘ BOSSA
-        if score >= 100 and not boss_defeated and not boss_active:
-            boss = pygame.Rect(
-                WIDTH // 2 - 100,
-                50,
-                200,
-                80
-            )
+        # POJAWIENIE SIE BOSSA
+        if kills_in_level >= KILLS_TO_BOSS and not boss_active:
+            boss = pygame.Rect(WIDTH // 2 - 100, 50, 200, 80)
+
             boss_health = boss_max_health
             boss_active = True
+            enemy_bullets = []
 
         # ZWYKLI PRZECIWNICY
         if not boss_active:
 
             for enemy in enemies[:]:
-
                 enemy.y += 2
 
                 if enemy.top > HEIGHT:
@@ -1111,44 +1242,36 @@ while running:
 
                     if not game_over:
                         enemies.append(
-                            pygame.Rect(
-                                random.randint(0, WIDTH - 40),
-                                -50,
-                                40,
-                                40
-                            )
+                            pygame.Rect(random.randint(0, WIDTH - 40), -50, 40, 40)
                         )
 
                     continue
 
                 for bullet in bullets[:]:
                     if enemy.colliderect(bullet):
-
                         create_explosion(enemy.centerx, enemy.centery)
 
                         score += 10
+                        kills_in_level += 1
 
                         drop_bonus(enemy.centerx, enemy.centery)
 
                         enemies.remove(enemy)
                         bullets.remove(bullet)
 
-                        enemies.append(
-                            pygame.Rect(
-                                random.randint(0, WIDTH - 40),
-                                -50,
-                                40,
-                                40
+                        if kills_in_level < KILLS_TO_BOSS:
+                            enemies.append(
+                                pygame.Rect(random.randint(0, WIDTH - 40), -50, 40, 40)
                             )
-                        )
 
                         break
 
-            # PRZECIWNICY STRZELAJĄ
+            # PRZECIWNICY STRZELAJA
             current_time = pygame.time.get_ticks()
 
             if (
                 enemies
+                and kills_in_level < KILLS_TO_BOSS
                 and current_time - last_enemy_shot > enemy_shoot_delay
             ):
                 chosen_enemy = random.choice(enemies)
@@ -1157,7 +1280,6 @@ while running:
 
         # BOSS
         if boss_active and boss:
-
             boss.x += BOSS_SPEED * boss_direction
 
             if boss.right >= WIDTH or boss.left <= 0:
@@ -1171,39 +1293,15 @@ while running:
 
             for bullet in bullets[:]:
                 if boss.colliderect(bullet):
-
                     boss_health -= 1
                     bullets.remove(bullet)
 
                     if boss_health <= 0:
-
-                        create_explosion(
-                            boss.centerx,
-                            boss.centery,
-                            True
-                        )
-
-                        boss_active = False
-                        boss_defeated = True
-                        boss = None
-                        score += 100
-
-                        enemy_bullets = []
-
-                        enemies = [
-                            pygame.Rect(
-                                random.randint(0, WIDTH - 40),
-                                random.randint(-500, -50),
-                                40,
-                                40
-                            )
-                            for i in range(5)
-                        ]
+                        defeat_boss()
 
                     break
 
             if boss_active and boss and boss.colliderect(player):
-
                 damage_player()
 
                 boss.x = WIDTH // 2 - 100
@@ -1211,7 +1309,6 @@ while running:
 
         # BONUSY
         for bonus in bonuses[:]:
-
             bonus["rect"].y += BONUS_SPEED
 
             if bonus["rect"].top > HEIGHT:
@@ -1222,9 +1319,8 @@ while running:
                 collect_bonus(bonus)
                 bonuses.remove(bonus)
 
-        # RUCH POCISKÓW PRZECIWNIKÓW
+        # RUCH POCISKOW PRZECIWNIKOW
         for bullet in enemy_bullets[:]:
-
             bullet["x"] += bullet["dx"]
             bullet["y"] += bullet["dy"]
 
@@ -1236,7 +1332,6 @@ while running:
             )
 
             if bullet_rect.colliderect(player):
-
                 enemy_bullets.remove(bullet)
                 damage_player()
                 continue
@@ -1250,7 +1345,7 @@ while running:
                 enemy_bullets.remove(bullet)
 
     # ZAPIS REKORDU
-    if game_over and not record_saved:
+    if (game_over or campaign_complete) and not record_saved:
         records = save_record(player_name, score)
         record_saved = True
 
@@ -1267,7 +1362,7 @@ while running:
         for enemy in enemies:
             draw_enemy(enemy)
 
-    # RYSOWANIE BONUSÓW
+    # RYSOWANIE BONUSOW
     for bonus in bonuses:
         draw_bonus(bonus)
 
@@ -1278,39 +1373,34 @@ while running:
         boss_bar_width = 300
         boss_bar_x = WIDTH // 2 - boss_bar_width // 2
 
-        pygame.draw.rect(
-            screen,
-            RED,
-            (boss_bar_x, 15, boss_bar_width, 15)
-        )
+        pygame.draw.rect(screen, RED, (boss_bar_x, 15, boss_bar_width, 15))
 
-        health_width = int(
-            boss_bar_width * boss_health / boss_max_health
-        )
+        health_width = int(boss_bar_width * boss_health / boss_max_health)
 
-        pygame.draw.rect(
-            screen,
-            GREEN,
-            (boss_bar_x, 15, health_width, 15)
-        )
+        pygame.draw.rect(screen, GREEN, (boss_bar_x, 15, health_width, 15))
 
         boss_text = font.render("BOSS!", True, LIGHT_PURPLE)
+        screen.blit(boss_text, boss_text.get_rect(center=(WIDTH // 2, 105)))
+
+        boss_name_text = small_font.render(
+            LEVELS[current_level - 1]["boss"],
+            True,
+            WHITE
+        )
+
         screen.blit(
-            boss_text,
-            boss_text.get_rect(center=(WIDTH // 2, 105))
+            boss_name_text,
+            boss_name_text.get_rect(center=(WIDTH // 2, 130))
         )
 
     # EKSPLOZJE
     for explosion in explosions[:]:
-
         for particle in explosion[:]:
-
             particle["x"] += particle["dx"]
             particle["y"] += particle["dy"]
             particle["life"] -= 1
 
             if particle["life"] > 0:
-
                 size = particle["size"]
 
                 pixel_x = int(particle["x"] // 4) * 4
@@ -1329,30 +1419,39 @@ while running:
             explosions.remove(explosion)
 
     # STATEK GRACZA
-    if not game_over:
+    if not game_over and not campaign_complete:
         draw_player_shield()
         draw_player(player)
 
     # INFORMACJE O GRZE
-    name_label = font.render(
-        f"GRACZ: {player_name}",
-        True,
-        LIGHT_PURPLE
-    )
-
-    score_text = font.render(
-        f"WYNIK: {score}",
-        True,
-        WHITE
-    )
+    name_label = font.render(f"GRACZ: {player_name}", True, LIGHT_PURPLE)
+    score_text = font.render(f"WYNIK: {score}", True, WHITE)
 
     screen.blit(name_label, (20, 20))
     screen.blit(score_text, (20, 55))
 
-    # ŻYCIA W FORMIE SERC
+    # AKTUALNY POZIOM
+    level_text = small_font.render(
+        f"POZIOM {current_level}/5: {LEVELS[current_level - 1]['name']}",
+        True,
+        GOLD
+    )
+
+    screen.blit(level_text, level_text.get_rect(topright=(WIDTH - 20, 20)))
+
+    # POSTEP DO BOSSA
+    if not boss_active and not level_transition and not campaign_complete:
+        progress_text = small_font.render(
+            f"POKONANI WROGOWIE: {kills_in_level}/{KILLS_TO_BOSS}",
+            True,
+            CYAN
+        )
+
+        screen.blit(progress_text, progress_text.get_rect(topright=(WIDTH - 20, 50)))
+
     draw_hearts(lives)
 
-    # INFORMACJA O AKTYWNYCH BONUSACH
+    # AKTYWNE BONUSY
     current_time = pygame.time.get_ticks()
 
     if shield_active:
@@ -1372,7 +1471,6 @@ while running:
 
     # GAME OVER
     if game_over:
-
         game_over_text = big_font.render("GAME OVER", True, RED)
 
         final_score = font.render(
@@ -1381,50 +1479,19 @@ while running:
             WHITE
         )
 
-        screen.blit(
-            game_over_text,
-            game_over_text.get_rect(center=(WIDTH // 2, 105))
-        )
-
-        screen.blit(
-            final_score,
-            final_score.get_rect(center=(WIDTH // 2, 165))
-        )
+        screen.blit(game_over_text, game_over_text.get_rect(center=(WIDTH // 2, 105)))
+        screen.blit(final_score, final_score.get_rect(center=(WIDTH // 2, 165)))
 
         draw_leaderboard(records, 225)
 
         mouse_pos = pygame.mouse.get_pos()
+        button_color = GREEN if restart_button.collidepoint(mouse_pos) else (0, 150, 70)
 
-        if restart_button.collidepoint(mouse_pos):
-            button_color = GREEN
-        else:
-            button_color = (0, 150, 70)
+        pygame.draw.rect(screen, button_color, restart_button, border_radius=12)
+        pygame.draw.rect(screen, WHITE, restart_button, 3, border_radius=12)
 
-        pygame.draw.rect(
-            screen,
-            button_color,
-            restart_button,
-            border_radius=12
-        )
-
-        pygame.draw.rect(
-            screen,
-            WHITE,
-            restart_button,
-            3,
-            border_radius=12
-        )
-
-        restart_text = font.render(
-            "ZAGRAJ PONOWNIE",
-            True,
-            WHITE
-        )
-
-        screen.blit(
-            restart_text,
-            restart_text.get_rect(center=restart_button.center)
-        )
+        restart_text = font.render("ZAGRAJ PONOWNIE", True, WHITE)
+        screen.blit(restart_text, restart_text.get_rect(center=restart_button.center))
 
         keyboard_text = small_font.render(
             "LUB NACISNIJ R NA KLAWIATURZE",
@@ -1432,24 +1499,82 @@ while running:
             LIGHT_PURPLE
         )
 
-        screen.blit(
-            keyboard_text,
-            keyboard_text.get_rect(center=(WIDTH // 2, 585))
+        screen.blit(keyboard_text, keyboard_text.get_rect(center=(WIDTH // 2, 585)))
+
+    # PRZEJSCIE NA KOLEJNY POZIOM
+    if level_transition:
+        overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        overlay.fill((0, 0, 20, 210))
+        screen.blit(overlay, (0, 0))
+
+        defeated_text = big_font.render("BOSS POKONANY!", True, GOLD)
+        screen.blit(defeated_text, defeated_text.get_rect(center=(WIDTH // 2, 250)))
+
+        next_level_text = font.render(
+            f"PRZYGOTUJ SIE NA: {LEVELS[current_level]['name']}",
+            True,
+            WHITE
         )
 
-    # ZWYCIĘSTWO
-    if boss_defeated and not game_over:
+        screen.blit(
+            next_level_text,
+            next_level_text.get_rect(center=(WIDTH // 2, 330))
+        )
 
-        victory_text = font.render(
-            "BOSS POKONANY!",
+        countdown = max(
+            1,
+            (level_transition_until - current_time + 999) // 1000
+        )
+
+        countdown_text = small_font.render(
+            f"Nastepny poziom za {countdown}...",
+            True,
+            CYAN
+        )
+
+        screen.blit(
+            countdown_text,
+            countdown_text.get_rect(center=(WIDTH // 2, 390))
+        )
+
+    # UKONCZENIE KAMPANII
+    if campaign_complete:
+        victory_text = big_font.render("KAMPANIA UKONCZONA!", True, GOLD)
+
+        screen.blit(
+            victory_text,
+            victory_text.get_rect(center=(WIDTH // 2, 100))
+        )
+
+        subtitle = font.render("URATOWALES GALAKTYKE!", True, LIGHT_PURPLE)
+        screen.blit(subtitle, subtitle.get_rect(center=(WIDTH // 2, 165)))
+
+        final_score = font.render(
+            f"{player_name}: {score} punktow",
+            True,
+            WHITE
+        )
+
+        screen.blit(final_score, final_score.get_rect(center=(WIDTH // 2, 220)))
+
+        draw_leaderboard(records, 285)
+
+        mouse_pos = pygame.mouse.get_pos()
+        button_color = GREEN if restart_button.collidepoint(mouse_pos) else (0, 150, 70)
+
+        pygame.draw.rect(screen, button_color, restart_button, border_radius=12)
+        pygame.draw.rect(screen, WHITE, restart_button, 3, border_radius=12)
+
+        restart_text = font.render("ZAGRAJ PONOWNIE", True, WHITE)
+        screen.blit(restart_text, restart_text.get_rect(center=restart_button.center))
+
+        keyboard_text = small_font.render(
+            "LUB NACISNIJ R NA KLAWIATURZE",
             True,
             LIGHT_PURPLE
         )
 
-        screen.blit(
-            victory_text,
-            victory_text.get_rect(center=(WIDTH // 2, 105))
-        )
+        screen.blit(keyboard_text, keyboard_text.get_rect(center=(WIDTH // 2, 585)))
 
     pygame.display.flip()
 
